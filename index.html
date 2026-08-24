@@ -131,9 +131,34 @@
 
   .section-grid{
     display:grid;
-    grid-template-columns:minmax(0,1.65fr) minmax(310px,.75fr);
+    grid-template-columns:minmax(0,1.45fr) minmax(320px,.80fr);
     gap:16px;
     margin-top:16px;
+    align-items:start;
+  }
+
+  .card-map .map-layout{
+    display:grid;
+    grid-template-columns:minmax(280px,.95fr) minmax(420px,1.35fr);
+    gap:18px;
+    align-items:stretch;
+  }
+  .card-map .map-copy{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .card-map .map-copy .card-head{
+    margin-bottom:0;
+  }
+  .map-frame{
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:#FBFDFE;
+    padding:10px;
+    min-height:470px;
+    display:flex;
+    align-items:stretch;
   }
   .card{
     background:var(--card);
@@ -173,8 +198,9 @@
 
   #map{
     width:100%;
-    height:535px;
-    margin-top:4px;
+    height:100%;
+    min-height:448px;
+    margin-top:0;
   }
 
   .insight{
@@ -453,35 +479,43 @@
     </div>
   </section>
 
-  <section class="section-grid">
-    <div class="card">
-      <div class="card-head">
-        <div>
-          <h2 class="title">Los principales orígenes del abastecimiento argentino</h2>
-          <p class="desc">El mapa muestra únicamente los 5 principales países de origen. Los porcentajes de Brasil, China, EE.UU., Alemania y Paraguay indican su participación real sobre <strong>todas</strong> las importaciones argentinas de 2025.</p>
+  
+<section class="section-grid">
+    <div class="card card-map">
+      <div class="map-layout">
+        <div class="map-copy">
+          <div class="card-head">
+            <div>
+              <h2 class="title">Los principales orígenes del abastecimiento argentino</h2>
+              <p class="desc">El mapa muestra únicamente los 5 principales países de origen. Los porcentajes de Brasil, China, EE.UU., Alemania y Paraguay indican su participación real sobre <strong>todas</strong> las importaciones argentinas de 2025.</p>
+            </div>
+            <div class="micro">Destino: Argentina 🇦🇷</div>
+          </div>
+
+          <div class="coverage">
+            <div class="coverage-top">
+              <span><strong>Top 5 orígenes:</strong> 64,9% del total importado</span>
+              <span><strong>Resto del mundo:</strong> 35,1%</span>
+            </div>
+            <div class="coverage-bar">
+              <div class="coverage-main"></div>
+              <div class="coverage-rest"></div>
+            </div>
+            <div class="coverage-legend">
+              <span>El mapa se enfoca en los 5 principales socios.</span>
+              <span>Argentina también importa de otros países.</span>
+            </div>
+          </div>
+
+          <div class="insight">
+            <strong>Lectura rápida:</strong> Brasil y China concentran juntos el <strong>48,0%</strong> de todas las importaciones argentinas.
+            Los 5 países que aparecen en el mapa explican el <strong>64,9%</strong> del total; el <strong>35,1%</strong> restante proviene de otros países.
+          </div>
         </div>
-        <div class="micro">Destino: Argentina 🇦🇷</div>
-      </div>
-      <div class="coverage">
-        <div class="coverage-top">
-          <span><strong>Top 5 orígenes:</strong> 64,9% del total importado</span>
-          <span><strong>Resto del mundo:</strong> 35,1%</span>
+
+        <div class="map-frame">
+          <div id="map"></div>
         </div>
-        <div class="coverage-bar">
-          <div class="coverage-main"></div>
-          <div class="coverage-rest"></div>
-        </div>
-        <div class="coverage-legend">
-          <span>El mapa se enfoca en los 5 principales socios.</span>
-          <span>Argentina también importa de otros países.</span>
-        </div>
-      </div>
-        
-      </div>
-      <div id="map"></div>
-      <div class="insight">
-        <strong>Lectura rápida:</strong> Brasil y China concentran juntos el <strong>48,0%</strong> de todas las importaciones argentinas.
-        Los 5 países que aparecen en el mapa explican el <strong>64,9%</strong> del total; el <strong>35,1%</strong> restante proviene de otros países.
       </div>
     </div>
 
@@ -495,6 +529,7 @@
       <div id="ranking" class="ranking"></div>
     </aside>
   </section>
+
 
   <section class="lower">
     <div class="card">
