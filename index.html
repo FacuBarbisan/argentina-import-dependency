@@ -573,7 +573,7 @@ const TOTAL = 75791;
 
 const suppliers = [
   {
-    id:"BRA", name:"Brasil", flag:"🇧🇷", lat:-15.8, lon:-47.9, labelLat:-10.0, labelLon:-78.0, amount:18424, share:24.3, yoy:28.5,
+    id:"BRA", name:"Brasil", flag:"🇧🇷", lat:-15.8, lon:-47.9, labelLat:-8.5, labelLon:-80.0, amount:18424, share:24.3, yoy:28.5,
     arrow:"↓", midpoint:{lat:-25.1, lon:-52.0},
     uses:[
       ["Bienes intermedios",5476],["Vehículos de pasajeros",3860],["Piezas y accesorios",3560],
@@ -609,7 +609,7 @@ const suppliers = [
     explain:"Alemania aparece sobre todo en insumos, piezas y bienes de capital. Su peso total es menor, pero está asociado a categorías productivas y tecnológicas."
   },
   {
-    id:"PRY", name:"Paraguay", flag:"🇵🇾", lat:-23.4, lon:-58.4, labelLat:-29.5, labelLon:-32.0, amount:2958, share:3.9, yoy:-10.7,
+    id:"PRY", name:"Paraguay", flag:"🇵🇾", lat:-23.4, lon:-58.4, labelLat:-31.5, labelLon:-27.0, amount:2958, share:3.9, yoy:-10.7,
     arrow:"↓", midpoint:{lat:-28.4, lon:-58.4},
     uses:[
       ["Bienes intermedios",2467],["Combustibles",267],["Piezas y accesorios",109],
@@ -745,10 +745,10 @@ function buildMap(){
     lon:suppliers.map(s=>s.lon),
     lat:suppliers.map(s=>s.lat),
     marker:{
-      size:suppliers.map(s=>10+s.share*.65),
-      color:"#FFFFFF",
-      line:{color:"#0B1F33",width:2},
-      opacity:1
+      size:suppliers.map(s=>18+s.share*.45),
+      color:"rgba(0,0,0,0)",
+      line:{color:"rgba(0,0,0,0)",width:0},
+      opacity:0.01
     },
     customdata:suppliers.map(s=>[s.id,s.name,s.amount,s.share,s.yoy]),
     hovertemplate:"<b>%{customdata[1]}</b><br>Participación sobre el total: %{customdata[3]:.1f}%<br>Importaciones: USD %{customdata[2]:,.0f} M<br>Variación: %{customdata[4]:.1f}%<extra></extra>",
