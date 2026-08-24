@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>¿De qué países depende Argentina? | Import Dependency Dashboard</title>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+<style>
+  :root{
+    --navy:#0B1F33;
+    --navy2:#132F4C;
+    --blue:#1F5F8B;
+    --teal:#188A8D;
+    --teal2:#2BA6A8;
+    --sky:#DCECF3;
+    --bg:#F4F7FA;
+    --card:#FFFFFF;
+    --text:#152536;
+    --muted:#6B7C8E;
+    --line:#DCE4EA;
+    --good:#2B8A66;
+    --bad:#B55252;
+    --shadow:0 14px 36px rgba(11,31,51,.08);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .page{
+    width:min(1480px, calc(100% - 36px));
+    margin:0 auto;
+    padding:30px 0 48px;
+  }
+
+  .hero{
+    background:linear-gradient(125deg,var(--navy),var(--navy2));
+    border-radius:26px;
+    padding:34px 38px 30px;
+    color:white;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero:after{
+    content:"";
+    position:absolute;
+    width:380px;height:380px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.08);
+    right:-120px; top:-175px;
+    box-shadow:0 0 0 48px rgba(255,255,255,.025),0 0 0 95px rgba(255,255,255,.018);
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    opacity:.72;
+    font-weight:750;
+    margin-bottom:12px;
+  }
+  h1{
+    margin:0;
+    max-width:880px;
+    font-size:clamp(31px,4.2vw,58px);
+    line-height:1.02;
+    letter-spacing:-.045em;
+  }
+  .hero p{
+    max-width:870px;
+    font-size:16px;
+    line-height:1.65;
+    color:rgba(255,255,255,.8);
+    margin:18px 0 0;
+  }
+  .hero strong{color:white}
+  .hero-note{
+    display:inline-flex;
+    gap:9px;
+    align-items:center;
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:999px;
+    padding:9px 13px;
+    margin-top:18px;
+    font-size:12px;
+    color:rgba(255,255,255,.88);
+  }
+
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-top:16px;
+  }
+  .kpi{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:19px;
+    padding:19px 20px 17px;
+    box-shadow:0 6px 18px rgba(11,31,51,.045);
+  }
+  .kpi .label{
+    color:var(--muted);
+    font-size:12px;
+    font-weight:750;
+    text-transform:uppercase;
+    letter-spacing:.07em;
+  }
+  .kpi .value{
+    font-size:31px;
+    line-height:1;
+    font-weight:820;
+    letter-spacing:-.04em;
+    color:var(--navy);
+    margin-top:9px;
+  }
+  .kpi .sub{
+    color:var(--muted);
+    margin-top:8px;
+    font-size:12px;
+    line-height:1.35;
+  }
+
+  .section-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.65fr) minmax(310px,.75fr);
+    gap:16px;
+    margin-top:16px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:22px;
+    box-shadow:0 8px 22px rgba(11,31,51,.045);
+  }
+  .card-head{
+    display:flex;
+    gap:16px;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:8px;
+  }
+  .title{
+    margin:0;
+    color:var(--navy);
+    font-size:20px;
+    letter-spacing:-.025em;
+  }
+  .desc{
+    color:var(--muted);
+    margin:6px 0 0;
+    font-size:13px;
+    line-height:1.45;
+  }
+  .micro{
+    font-size:11px;
+    color:var(--muted);
+    background:#F6F9FB;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:7px 9px;
+    white-space:nowrap;
+  }
+
+  #map{
+    width:100%;
+    height:535px;
+    margin-top:4px;
+  }
+
+  .insight{
+    background:#EAF4F6;
+    border:1px solid #CFE5E8;
+    color:#234751;
+    border-radius:16px;
+    padding:14px 16px;
+    font-size:13px;
+    line-height:1.48;
+    margin-top:8px;
+  }
+  .insight strong{color:var(--navy)}
+
+  .coverage{
+    margin:10px 0 6px;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:#FBFDFE;
+  }
+  .coverage-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    margin-bottom:9px;
+    font-size:12px;
+    color:#385062;
+  }
+  .coverage-top strong{color:var(--navy)}
+  .coverage-bar{
+    height:12px;
+    border-radius:999px;
+    overflow:hidden;
+    background:#E9EFF2;
+    display:flex;
+  }
+  .coverage-main{
+    width:64.9%;
+    background:linear-gradient(90deg,var(--navy2),var(--teal));
+  }
+  .coverage-rest{
+    width:35.1%;
+    background:#C9D8E2;
+  }
+  .coverage-legend{
+    margin-top:8px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    font-size:11px;
+    color:var(--muted);
+  }
+
+  .ranking{
+    margin-top:12px;
+    display:grid;
+    gap:9px;
+  }
+  .rank-row{
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px 12px 11px;
+    cursor:pointer;
+    transition:.18s ease;
+    background:#fff;
+  }
+  .rank-row:hover,.rank-row.active{
+    border-color:#9FC5D3;
+    transform:translateY(-1px);
+    box-shadow:0 5px 14px rgba(11,31,51,.06);
+    background:#F8FBFC;
+  }
+  .rank-top{
+    display:flex;align-items:center;justify-content:space-between;gap:10px
+  }
+  .rank-country{
+    display:flex;align-items:center;gap:8px;font-weight:780;color:var(--navy);
+  }
+  .flag{font-size:18px}
+  .share{font-weight:820;color:var(--navy);font-size:15px}
+  .track{
+    height:6px;background:#E7EEF2;border-radius:999px;overflow:hidden;margin-top:9px;
+  }
+  .fill{
+    height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--teal2));
+  }
+  .rank-meta{
+    display:flex;justify-content:space-between;
+    color:var(--muted);font-size:11px;margin-top:7px;
+  }
+
+  .lower{
+    display:grid;
+    grid-template-columns:1fr 1.15fr;
+    gap:16px;
+    margin-top:16px;
+  }
+
+  .category-list{
+    display:grid;gap:12px;margin-top:18px;
+  }
+  .cat-line{}
+  .cat-top{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:12px;
+    font-size:12px;
+  }
+  .cat-name{font-weight:720;color:#2A3B4C}
+  .cat-num{font-weight:820;color:var(--navy)}
+  .cat-sub{color:var(--muted);font-size:10.5px;margin-top:2px}
+  .cat-track{
+    height:9px;background:#EAF0F3;border-radius:999px;overflow:hidden;margin-top:7px;
+  }
+  .cat-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--navy2),var(--teal));
+    border-radius:999px;
+  }
+
+  .country-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:15px 0 18px;
+  }
+  .tab{
+    border:1px solid var(--line);
+    background:white;
+    color:#34485A;
+    border-radius:999px;
+    padding:8px 11px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:12px;
+    transition:.18s ease;
+  }
+  .tab:hover,.tab.active{
+    background:var(--navy);
+    border-color:var(--navy);
+    color:white;
+  }
+
+  .country-summary{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:9px;
+    margin-bottom:15px;
+  }
+  .mini{
+    background:#F7FAFB;
+    border:1px solid var(--line);
+    border-radius:13px;
+    padding:11px 12px;
+  }
+  .mini span{
+    display:block;color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:760;letter-spacing:.05em;
+  }
+  .mini strong{
+    display:block;color:var(--navy);font-size:17px;margin-top:4px;
+  }
+  .positive{color:var(--good)!important}
+  .negative{color:var(--bad)!important}
+
+  #detailBars{display:grid;gap:10px}
+  .detail-row{
+    display:grid;
+    grid-template-columns:170px 1fr 85px;
+    gap:11px;align-items:center;
+    font-size:12px;
+  }
+  .detail-name{font-weight:710;color:#33485A}
+  .detail-track{height:10px;background:#E9EFF2;border-radius:999px;overflow:hidden}
+  .detail-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:999px}
+  .detail-value{text-align:right;font-weight:790;color:var(--navy)}
+
+  .explain{
+    margin-top:16px;
+    background:#F4F9FA;
+    border-left:4px solid var(--teal);
+    border-radius:12px;
+    padding:13px 14px;
+    color:#3B5364;
+    font-size:12.5px;
+    line-height:1.48;
+  }
+
+  .method{
+    margin-top:16px;
+  }
+  details{
+    background:white;border:1px solid var(--line);border-radius:18px;padding:0 18px;
+  }
+  summary{
+    cursor:pointer;padding:16px 0;font-weight:780;color:var(--navy);
+  }
+  details p, details li{
+    color:var(--muted);font-size:12px;line-height:1.55;
+  }
+  details ul{padding-left:19px}
+
+  .footer{
+    display:flex;justify-content:space-between;gap:24px;align-items:flex-start;
+    margin-top:17px;color:var(--muted);font-size:10.5px;line-height:1.5;
+    padding:0 4px;
+  }
+  .footer a{color:var(--blue);text-decoration:none}
+  .footer a:hover{text-decoration:underline}
+
+  .tag{
+    display:inline-block;
+    border-radius:999px;
+    background:#EDF5F7;
+    color:#315E69;
+    padding:5px 8px;
+    font-size:10px;
+    font-weight:780;
+    margin-left:7px;
+  }
+
+  @media (max-width:1050px){
+    .kpis{grid-template-columns:1fr 1fr}
+    .section-grid,.lower{grid-template-columns:1fr}
+    #map{height:490px}
+  }
+  @media (max-width:620px){
+    .page{width:min(100% - 18px,1480px);padding-top:10px}
+    .hero{padding:26px 21px;border-radius:20px}
+    .kpis{grid-template-columns:1fr 1fr;gap:9px}
+    .kpi{padding:15px}
+    .kpi .value{font-size:24px}
+    .card{padding:16px;border-radius:18px}
+    #map{height:420px}
+    .detail-row{grid-template-columns:120px 1fr 72px;font-size:10.5px}
+    .country-summary{grid-template-columns:1fr}
+    .footer{flex-direction:column}
+    .micro{display:none}
+  }
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">Trade Intelligence · Argentina · 2025</div>
+    <h1>¿De qué países depende Argentina para importar?</h1>
+    <p>
+      Una mirada simple a <strong>quién abastece a Argentina</strong> y qué compramos a los principales socios.
+      Este dashboard muestra <strong>los 5 principales orígenes</strong>, no la totalidad de países. Los porcentajes visibles corresponden al <strong>peso real de cada país sobre el total importado por Argentina</strong>.
+    </p>
+    <div class="hero-note">💡 Pasá el mouse por el mapa o hacé clic en un país para explorar.</div>
+  </header>
+
+  <section class="kpis">
+    <div class="kpi">
+      <div class="label">Importaciones 2025</div>
+      <div class="value">USD 75.791 M</div>
+      <div class="sub">Total anual de compras externas de bienes.</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Crecimiento vs. 2024</div>
+      <div class="value">+24,7%</div>
+      <div class="sub">El volumen importado aumentó con fuerza durante el año.</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Brasil + China</div>
+      <div class="value">48,0%</div>
+      <div class="sub">Casi 1 de cada 2 dólares importados vino de esos dos orígenes.</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Top 5 orígenes</div>
+      <div class="value">64,9%</div>
+      <div class="sub">Brasil, China, EE.UU., Alemania y Paraguay.</div>
+    </div>
+  </section>
+
+  <section class="section-grid">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="title">Los principales orígenes del abastecimiento argentino</h2>
+          <p class="desc">El mapa muestra únicamente los 5 principales países de origen. Los porcentajes de Brasil, China, EE.UU., Alemania y Paraguay indican su participación real sobre <strong>todas</strong> las importaciones argentinas de 2025.</p>
+        </div>
+        <div class="micro">Destino: Argentina 🇦🇷</div>
+      </div>
+      <div class="coverage">
+        <div class="coverage-top">
+          <span><strong>Top 5 orígenes:</strong> 64,9% del total importado</span>
+          <span><strong>Resto del mundo:</strong> 35,1%</span>
+        </div>
+        <div class="coverage-bar">
+          <div class="coverage-main"></div>
+          <div class="coverage-rest"></div>
+        </div>
+        <div class="coverage-legend">
+          <span>El mapa se enfoca en los 5 principales socios.</span>
+          <span>Argentina también importa de otros países.</span>
+        </div>
+      </div>
+        <div class="coverage-legend">
+          <span>El mapa se enfoca en los 5 principales socios.</span>
+          <span>Argentina también importa del resto del mundo.</span>
+        </div>
+      </div>
+      <div id="map"></div>
+      <div class="insight">
+        <strong>Lectura rápida:</strong> Brasil y China concentran juntos el <strong>48,0%</strong> de todas las importaciones argentinas.
+        Los 5 países que aparecen en el mapa explican el <strong>64,9%</strong> del total; el <strong>35,1%</strong> restante proviene de otros países.
+      </div>
+    </div>
+
+    <aside class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="title">Top 5 principales orígenes</h2>
+          <p class="desc">Hacé clic en un país para ver qué le compra Argentina. Cada porcentaje está calculado sobre el total importado por Argentina. Los porcentajes siguen expresando participación sobre el total importado, no dentro del Top 5.</p>
+        </div>
+      </div>
+      <div id="ranking" class="ranking"></div>
+    </aside>
+  </section>
+
+  <section class="lower">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="title">¿Qué importa Argentina?</h2>
+          <p class="desc">No todo lo importado es consumo final. La mayor parte son insumos, máquinas y componentes usados por la economía.</p>
+        </div>
+      </div>
+      <div id="categoryList" class="category-list"></div>
+      <div class="insight" style="margin-top:18px">
+        <strong>Dato clave:</strong> bienes intermedios + maquinaria + piezas explican cerca del <strong>72%</strong> de las importaciones.
+      </div>
+    </div>
+
+    <div class="card" id="countryDetailCard">
+      <div class="card-head">
+        <div>
+          <h2 class="title">¿Qué le compramos a <span id="selectedCountry">Brasil</span>? <span class="tag">Interactivo</span></h2>
+          <p class="desc">El detalle cambia al seleccionar un país en el mapa, en el ranking o en los botones.</p>
+        </div>
+      </div>
+
+      <div id="countryTabs" class="country-tabs"></div>
+
+      <div class="country-summary">
+        <div class="mini">
+          <span>Importaciones</span>
+          <strong id="detailAmount">USD 18.424 M</strong>
+        </div>
+        <div class="mini">
+          <span>Participación</span>
+          <strong id="detailShare">24,3%</strong>
+        </div>
+        <div class="mini">
+          <span>Variación anual</span>
+          <strong id="detailYoy" class="positive">+28,5%</strong>
+        </div>
+      </div>
+
+      <div id="detailBars"></div>
+      <div id="countryExplain" class="explain"></div>
+    </div>
+  </section>
+
+  <section class="method">
+    <details>
+      <summary>Cómo leer este dashboard y qué significa “dependencia”</summary>
+      <p>
+        El porcentaje del mapa es la participación de cada origen sobre las importaciones totales argentinas de 2025.
+        Esta visualización muestra solo los 5 principales orígenes, que juntos explican 64,9% del total; el 35,1% restante corresponde a otros países. Sirve para entender concentración general, pero no alcanza para afirmar que exista una dependencia crítica.
+      </p>
+      <ul>
+        <li><strong>Participación país:</strong> importaciones desde ese país ÷ importaciones totales.</li>
+        <li><strong>Dependencia por producto:</strong> se debería medir bajando a un NCM específico y observando qué porcentaje viene de un solo origen.</li>
+        <li>Por eso esta primera vista es macro: cuenta la historia general sin confundir concentración con vulnerabilidad.</li>
+      </ul>
+    </details>
+  </section>
+
+  <footer class="footer">
+    <div>
+      <strong>Fuente principal:</strong> INDEC, Intercambio Comercial Argentino 2025.<br>
+      Los valores están expresados en millones de USD y pueden presentar diferencias mínimas por redondeo.
+    </div>
+    <div>
+      <a href="https://www.indec.gob.ar/uploads/informesdeprensa/ica_01_26ABE4F7373E.pdf" target="_blank">Informe ICA 2025</a>
+      &nbsp;·&nbsp;
+      <a href="https://comex.indec.gob.ar/" target="_blank">COMEX INDEC</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+const TOTAL = 75791;
+
+const suppliers = [
+  {
+    id:"BRA", name:"Brasil", flag:"🇧🇷", lat:-15.8, lon:-47.9, labelLat:-9.5, labelLon:-70.0, amount:18424, share:24.3, yoy:28.5,
+    arrow:"↓", midpoint:{lat:-25.1, lon:-52.0},
+    uses:[
+      ["Bienes intermedios",5476],["Vehículos de pasajeros",3860],["Piezas y accesorios",3560],
+      ["Bienes de capital",3445],["Bienes de consumo",1858],["Combustibles",218],["Resto",6]
+    ],
+    explain:"Brasil tiene un perfil diversificado: Argentina le compra muchos insumos industriales, pero también vehículos, autopartes y maquinaria. Es el principal origen individual de las importaciones 2025."
+  },
+  {
+    id:"CHN", name:"China", flag:"🇨🇳", lat:35.9, lon:104.2, labelLat:40.8, labelLon:109.0, amount:17954, share:23.7, yoy:53.9,
+    arrow:"↙", midpoint:{lat:7.0, lon:27.0},
+    uses:[
+      ["Bienes de capital",5012],["Bienes intermedios",4859],["Piezas y accesorios",3769],
+      ["Bienes de consumo",3598],["Vehículos de pasajeros",710],["Combustibles",3],["Resto",2]
+    ],
+    explain:"China se destaca especialmente en maquinaria, insumos, componentes y bienes de consumo. En 2025 sus ventas a Argentina crecieron con mucha fuerza y quedaron muy cerca de Brasil."
+  },
+  {
+    id:"USA", name:"Estados Unidos", flag:"🇺🇸", lat:38.0, lon:-97.0, labelLat:43.0, labelLon:-100.0, amount:6704, share:8.8, yoy:7.7,
+    arrow:"↘", midpoint:{lat:3.0, lon:-78.0},
+    uses:[
+      ["Bienes intermedios",2337],["Bienes de capital",1424],["Combustibles",1200],
+      ["Piezas y accesorios",1098],["Bienes de consumo",586],["Vehículos de pasajeros",52],["Resto",7]
+    ],
+    explain:"Estados Unidos pesa menos que Brasil o China, pero tiene una composición relevante en insumos, maquinaria, combustibles y componentes."
+  },
+  {
+    id:"DEU", name:"Alemania", flag:"🇩🇪", lat:51.2, lon:10.4, labelLat:56.2, labelLon:13.0, amount:3136, share:4.1, yoy:18.2,
+    arrow:"↙", midpoint:{lat:8.0, lon:-20.0},
+    uses:[
+      ["Bienes intermedios",930],["Piezas y accesorios",867],["Bienes de capital",671],
+      ["Bienes de consumo",436],["Vehículos de pasajeros",134],["Combustibles",97],["Resto",0]
+    ],
+    explain:"Alemania aparece sobre todo en insumos, piezas y bienes de capital. Su peso total es menor, pero está asociado a categorías productivas y tecnológicas."
+  },
+  {
+    id:"PRY", name:"Paraguay", flag:"🇵🇾", lat:-23.4, lon:-58.4, labelLat:-24.5, labelLon:-37.0, amount:2958, share:3.9, yoy:-10.7,
+    arrow:"↓", midpoint:{lat:-28.4, lon:-58.4},
+    uses:[
+      ["Bienes intermedios",2467],["Combustibles",267],["Piezas y accesorios",109],
+      ["Bienes de consumo",105],["Bienes de capital",9],["Vehículos de pasajeros",0],["Resto",0]
+    ],
+    explain:"Paraguay es el caso más concentrado de los cinco: la gran mayoría de lo que Argentina le compra son bienes intermedios."
+  }
+];
+
+const categories = [
+  ["Bienes intermedios",24300,32.1,"Insumos usados para producir otros bienes."],
+  ["Piezas y accesorios",15113,19.9,"Componentes para máquinas y equipos."],
+  ["Bienes de capital",15073,19.9,"Maquinaria y equipos productivos."],
+  ["Bienes de consumo",11401,15.0,"Productos destinados al consumo final."],
+  ["Vehículos de pasajeros",5678,7.5,"Automóviles para transporte de personas."],
+  ["Combustibles y lubricantes",3271,4.3,"Energía y combustibles importados."],
+  ["Resto",955,1.3,"Otras operaciones no incluidas arriba."]
+];
+
+const ARG = {lat:-34.6, lon:-58.4};
+
+function formatM(v){
+  return "USD " + v.toLocaleString("es-AR") + " M";
+}
+function formatPct(v){
+  return v.toLocaleString("es-AR",{minimumFractionDigits:1,maximumFractionDigits:1}) + "%";
+}
+
+function buildRanking(){
+  const el = document.getElementById("ranking");
+  el.innerHTML = "";
+  suppliers.forEach((s,i)=>{
+    const row = document.createElement("div");
+    row.className = "rank-row" + (i===0 ? " active":"");
+    row.dataset.id = s.id;
+    row.innerHTML = `
+      <div class="rank-top">
+        <div class="rank-country"><span class="flag">${s.flag}</span><span>${i+1}. ${s.name}</span></div>
+        <div class="share">${formatPct(s.share)}</div>
+      </div>
+      <div class="track"><div class="fill" style="width:${s.share/24.3*100}%"></div></div>
+      <div class="rank-meta"><span>${formatM(s.amount)}</span><span>${s.yoy>=0?"+":""}${formatPct(s.yoy)} vs. 2024</span></div>
+    `;
+    row.onclick = ()=>selectCountry(s.id,true);
+    el.appendChild(row);
+  });
+}
+
+function buildCategories(){
+  const el = document.getElementById("categoryList");
+  el.innerHTML = "";
+  const max = Math.max(...categories.map(d=>d[2]));
+  categories.forEach(c=>{
+    const d = document.createElement("div");
+    d.className="cat-line";
+    d.innerHTML=`
+      <div class="cat-top">
+        <div>
+          <div class="cat-name">${c[0]}</div>
+          <div class="cat-sub">${c[3]}</div>
+        </div>
+        <div class="cat-num">${formatPct(c[2])}</div>
+      </div>
+      <div class="cat-track"><div class="cat-fill" style="width:${c[2]/max*100}%"></div></div>
+    `;
+    el.appendChild(d);
+  });
+}
+
+function buildTabs(){
+  const el = document.getElementById("countryTabs");
+  el.innerHTML="";
+  suppliers.forEach((s,i)=>{
+    const b=document.createElement("button");
+    b.className="tab"+(i===0?" active":"");
+    b.dataset.id=s.id;
+    b.textContent=`${s.flag} ${s.name}`;
+    b.onclick=()=>selectCountry(s.id,false);
+    el.appendChild(b);
+  });
+}
+
+function selectCountry(id, scroll){
+  const s = suppliers.find(x=>x.id===id);
+  if(!s) return;
+
+  document.querySelectorAll(".rank-row").forEach(x=>x.classList.toggle("active",x.dataset.id===id));
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.id===id));
+
+  document.getElementById("selectedCountry").textContent=s.name;
+  document.getElementById("detailAmount").textContent=formatM(s.amount);
+  document.getElementById("detailShare").textContent=formatPct(s.share);
+
+  const yoy=document.getElementById("detailYoy");
+  yoy.textContent=(s.yoy>=0?"+":"")+formatPct(s.yoy);
+  yoy.className=s.yoy>=0?"positive":"negative";
+
+  const sorted=[...s.uses].sort((a,b)=>b[1]-a[1]).filter(d=>d[1]>0);
+  const max=Math.max(...sorted.map(d=>d[1]));
+  document.getElementById("detailBars").innerHTML = sorted.map(d=>`
+    <div class="detail-row">
+      <div class="detail-name">${d[0]}</div>
+      <div class="detail-track"><div class="detail-fill" style="width:${d[1]/max*100}%"></div></div>
+      <div class="detail-value">${d[1].toLocaleString("es-AR")} M</div>
+    </div>
+  `).join("");
+
+  document.getElementById("countryExplain").innerHTML = `<strong>${s.flag} ${s.name}:</strong> ${s.explain}`;
+
+  if(scroll){
+    document.getElementById("countryDetailCard").scrollIntoView({behavior:"smooth",block:"center"});
+  }
+}
+
+function buildMap(){
+  const lineTraces = suppliers.map((s,i)=>({
+    type:"scattergeo",
+    mode:"lines",
+    lon:[s.lon,ARG.lon],
+    lat:[s.lat,ARG.lat],
+    line:{
+      width:1.8 + s.share/6.5,
+      color:["#1F5F8B","#188A8D","#497B9B","#7297AA","#5D8793"][i]
+    },
+    opacity:.8,
+    hoverinfo:"skip",
+    showlegend:false
+  }));
+
+  const supplierTrace = {
+    type:"scattergeo",
+    mode:"markers",
+    lon:suppliers.map(s=>s.lon),
+    lat:suppliers.map(s=>s.lat),
+    marker:{
+      size:suppliers.map(s=>10+s.share*.65),
+      color:"#FFFFFF",
+      line:{color:"#0B1F33",width:2},
+      opacity:1
+    },
+    customdata:suppliers.map(s=>[s.id,s.name,s.amount,s.share,s.yoy]),
+    hovertemplate:"<b>%{customdata[1]}</b><br>Participación sobre el total: %{customdata[3]:.1f}%<br>Importaciones: USD %{customdata[2]:,.0f} M<br>Variación: %{customdata[4]:.1f}%<extra></extra>",
+    name:"Origen",
+    showlegend:false
+  };
+
+  const supplierLabelTrace = {
+    type:"scattergeo",
+    mode:"text",
+    lon:suppliers.map(s=>s.labelLon ?? s.lon),
+    lat:suppliers.map(s=>s.labelLat ?? s.lat),
+    text:suppliers.map(s=>`${s.flag} ${s.name}<br><b>${formatPct(s.share)}</b>`),
+    textfont:{size:12,color:"#0B1F33"},
+    hoverinfo:"skip",
+    showlegend:false
+  };
+
+  const arrowTrace = {
+    type:"scattergeo",
+    mode:"text",
+    lon:suppliers.map(s=>s.midpoint.lon),
+    lat:suppliers.map(s=>s.midpoint.lat),
+    text:suppliers.map(s=>s.arrow),
+    textfont:{size:24,color:"#315E69"},
+    hoverinfo:"skip",
+    showlegend:false
+  };
+
+  const argTrace = {
+    type:"scattergeo",
+    mode:"markers+text",
+    lon:[ARG.lon], lat:[ARG.lat],
+    text:["🇦🇷 ARGENTINA"],
+    textposition:"bottom center",
+    textfont:{size:13,color:"#0B1F33"},
+    marker:{size:19,color:"#0B1F33",line:{color:"#FFFFFF",width:3}},
+    hovertemplate:"<b>Argentina</b><br>Destino de las importaciones<extra></extra>",
+    showlegend:false
+  };
+
+  const layout = {
+    margin:{l:0,r:0,t:0,b:0},
+    paper_bgcolor:"#FFFFFF",
+    geo:{
+      scope:"world",
+      projection:{type:"natural earth"},
+      showframe:false,
+      showcoastlines:true,
+      coastlinecolor:"#B8C7D1",
+      coastlinewidth:.7,
+      showcountries:true,
+      countrycolor:"#D5DEE4",
+      countrywidth:.6,
+      showland:true,
+      landcolor:"#E9EFF3",
+      showocean:true,
+      oceancolor:"#F8FBFC",
+      showlakes:true,
+      lakecolor:"#F8FBFC",
+      bgcolor:"#FFFFFF",
+      lataxis:{range:[-58,75]},
+      lonaxis:{range:[-155,150]}
+    },
+    hoverlabel:{
+      bgcolor:"#0B1F33",
+      bordercolor:"#0B1F33",
+      font:{color:"#FFFFFF",size:12}
+    }
+  };
+
+  const config = {
+    responsive:true,
+    displayModeBar:false,
+    scrollZoom:false
+  };
+
+  Plotly.newPlot("map",[...lineTraces,supplierTrace,supplierLabelTrace,arrowTrace,argTrace],layout,config).then(()=>{
+    const map=document.getElementById("map");
+    map.on("plotly_click", ev=>{
+      const p=ev.points && ev.points[0];
+      if(p && p.customdata && p.customdata[0]) selectCountry(p.customdata[0],true);
+    });
+  }).catch(()=>{
+    document.getElementById("map").innerHTML = `
+      <div style="height:100%;display:grid;place-items:center;text-align:center;padding:30px;color:#6B7C8E;background:#F7FAFB;border-radius:16px">
+        <div><div style="font-size:56px">🌎</div><strong style="display:block;color:#0B1F33;margin:8px 0">No se pudo cargar la cartografía</strong>
+        Abrí el archivo con conexión a internet. El resto del dashboard sigue funcionando.</div>
+      </div>`;
+  });
+}
+
+buildRanking();
+buildCategories();
+buildTabs();
+selectCountry("BRA",false);
+
+if(window.Plotly){
+  buildMap();
+}else{
+  document.getElementById("map").innerHTML = `
+    <div style="height:100%;display:grid;place-items:center;text-align:center;padding:30px;color:#6B7C8E;background:#F7FAFB;border-radius:16px">
+      <div><div style="font-size:56px">🌎</div><strong style="display:block;color:#0B1F33;margin:8px 0">Mapa no disponible</strong>
+      Se necesita conexión a internet para cargar el motor del mapa.</div>
+    </div>`;
+}
+</script>
+</body>
+</html>
