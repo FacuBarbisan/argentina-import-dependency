@@ -407,7 +407,8 @@
     .kpi{padding:15px}
     .kpi .value{font-size:24px}
     .card{padding:16px;border-radius:18px}
-    #map{height:420px}
+    #map{height:455px}
+    #map .textpoint text{font-size:11px!important}
     .detail-row{grid-template-columns:120px 1fr 72px;font-size:10.5px}
     .country-summary{grid-template-columns:1fr}
     .footer{flex-direction:column}
@@ -475,10 +476,7 @@
           <span>Argentina también importa de otros países.</span>
         </div>
       </div>
-        <div class="coverage-legend">
-          <span>El mapa se enfoca en los 5 principales socios.</span>
-          <span>Argentina también importa del resto del mundo.</span>
-        </div>
+        
       </div>
       <div id="map"></div>
       <div class="insight">
@@ -575,7 +573,7 @@ const TOTAL = 75791;
 
 const suppliers = [
   {
-    id:"BRA", name:"Brasil", flag:"🇧🇷", lat:-15.8, lon:-47.9, labelLat:-9.5, labelLon:-70.0, amount:18424, share:24.3, yoy:28.5,
+    id:"BRA", name:"Brasil", flag:"🇧🇷", lat:-15.8, lon:-47.9, labelLat:-10.0, labelLon:-78.0, amount:18424, share:24.3, yoy:28.5,
     arrow:"↓", midpoint:{lat:-25.1, lon:-52.0},
     uses:[
       ["Bienes intermedios",5476],["Vehículos de pasajeros",3860],["Piezas y accesorios",3560],
@@ -611,7 +609,7 @@ const suppliers = [
     explain:"Alemania aparece sobre todo en insumos, piezas y bienes de capital. Su peso total es menor, pero está asociado a categorías productivas y tecnológicas."
   },
   {
-    id:"PRY", name:"Paraguay", flag:"🇵🇾", lat:-23.4, lon:-58.4, labelLat:-24.5, labelLon:-37.0, amount:2958, share:3.9, yoy:-10.7,
+    id:"PRY", name:"Paraguay", flag:"🇵🇾", lat:-23.4, lon:-58.4, labelLat:-29.5, labelLon:-32.0, amount:2958, share:3.9, yoy:-10.7,
     arrow:"↓", midpoint:{lat:-28.4, lon:-58.4},
     uses:[
       ["Bienes intermedios",2467],["Combustibles",267],["Piezas y accesorios",109],
@@ -812,7 +810,7 @@ function buildMap(){
       showlakes:true,
       lakecolor:"#F8FBFC",
       bgcolor:"#FFFFFF",
-      lataxis:{range:[-58,75]},
+      lataxis:{range:[-64,75]},
       lonaxis:{range:[-155,150]}
     },
     hoverlabel:{
