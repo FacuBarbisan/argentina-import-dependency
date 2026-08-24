@@ -189,6 +189,47 @@
   }
   .insight strong{color:var(--navy)}
 
+  .coverage{
+    margin:10px 0 6px;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:#FBFDFE;
+  }
+  .coverage-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    margin-bottom:9px;
+    font-size:12px;
+    color:#385062;
+  }
+  .coverage-top strong{color:var(--navy)}
+  .coverage-bar{
+    height:12px;
+    border-radius:999px;
+    overflow:hidden;
+    background:#E9EFF2;
+    display:flex;
+  }
+  .coverage-main{
+    width:64.9%;
+    background:linear-gradient(90deg,var(--navy2),var(--teal));
+  }
+  .coverage-rest{
+    width:35.1%;
+    background:#C9D8E2;
+  }
+  .coverage-legend{
+    margin-top:8px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    font-size:11px;
+    color:var(--muted);
+  }
+
   .ranking{
     margin-top:12px;
     display:grid;
@@ -383,7 +424,7 @@
     <h1>¿De qué países depende Argentina para importar?</h1>
     <p>
       Una mirada simple a <strong>quién abastece a Argentina</strong> y qué compramos a los principales socios.
-      El objetivo no es medir riesgo geopolítico, sino entender <strong>cómo está concentrado el abastecimiento externo</strong>.
+      Este dashboard muestra <strong>los 5 principales orígenes</strong>, no la totalidad de países. Los porcentajes visibles corresponden al <strong>peso real de cada país sobre el total importado por Argentina</strong>.
     </p>
     <div class="hero-note">💡 Pasá el mouse por el mapa o hacé clic en un país para explorar.</div>
   </header>
@@ -415,23 +456,36 @@
     <div class="card">
       <div class="card-head">
         <div>
-          <h2 class="title">El mapa del abastecimiento argentino</h2>
-          <p class="desc">Las líneas muestran los cinco principales orígenes. El porcentaje indica cuánto representa cada país sobre todas las importaciones de 2025.</p>
+          <h2 class="title">Los principales orígenes del abastecimiento argentino</h2>
+          <p class="desc">Las líneas muestran los 5 principales orígenes de importación. El porcentaje indica cuánto representa cada país sobre <strong>todas</strong> las importaciones argentinas de 2025.</p>
         </div>
         <div class="micro">Destino: Argentina 🇦🇷</div>
       </div>
+      <div class="coverage">
+        <div class="coverage-top">
+          <span><strong>Top 5 orígenes:</strong> 64,9% del total importado</span>
+          <span><strong>Resto del mundo:</strong> 35,1%</span>
+        </div>
+        <div class="coverage-bar">
+          <div class="coverage-main"></div>
+          <div class="coverage-rest"></div>
+        </div>
+        <div class="coverage-legend">
+          <span>El mapa se enfoca en los 5 principales socios.</span>
+          <span>Argentina también importa del resto del mundo.</span>
+        </div>
+      </div>
       <div id="map"></div>
       <div class="insight">
-        <strong>Lectura rápida:</strong> Brasil y China concentran juntos el <strong>48,0%</strong> del total.
-        Esto no significa que Argentina “dependa” de ambos para todos los productos: la concentración cambia mucho según qué bien se analice.
+        <strong>Lectura rápida:</strong> Brasil y China concentran juntos el <strong>48,0%</strong> del total importado por Argentina. Este mapa <strong>no muestra todos los países proveedores</strong>, sino únicamente los 5 principales, que en conjunto explican el <strong>64,9%</strong>.
       </div>
     </div>
 
     <aside class="card">
       <div class="card-head">
         <div>
-          <h2 class="title">Principales orígenes</h2>
-          <p class="desc">Hacé clic en un país para ver qué le compra Argentina.</p>
+          <h2 class="title">Top 5 principales orígenes</h2>
+          <p class="desc">Hacé clic en un país para ver qué le compra Argentina. Los porcentajes siguen expresando participación sobre el total importado, no dentro del Top 5.</p>
         </div>
       </div>
       <div id="ranking" class="ranking"></div>
@@ -487,7 +541,7 @@
       <summary>Cómo leer este dashboard y qué significa “dependencia”</summary>
       <p>
         El porcentaje del mapa es la participación de cada origen sobre las importaciones totales argentinas de 2025.
-        Sirve para entender concentración general, pero no alcanza para afirmar que exista una dependencia crítica.
+        Esta visualización muestra solo los 5 principales orígenes, que juntos explican 64,9% del total; el 35,1% restante corresponde a otros países. Sirve para entender concentración general, pero no alcanza para afirmar que exista una dependencia crítica.
       </p>
       <ul>
         <li><strong>Participación país:</strong> importaciones desde ese país ÷ importaciones totales.</li>
@@ -693,7 +747,7 @@ function buildMap(){
       opacity:1
     },
     customdata:suppliers.map(s=>[s.id,s.name,s.amount,s.share,s.yoy]),
-    hovertemplate:"<b>%{customdata[1]}</b><br>Participación: %{customdata[3]:.1f}%<br>Importaciones: USD %{customdata[2]:,.0f} M<br>Variación: %{customdata[4]:.1f}%<extra></extra>",
+    hovertemplate:"<b>%{customdata[1]}</b><br>Participación sobre el total: %{customdata[3]:.1f}%<br>Importaciones: USD %{customdata[2]:,.0f} M<br>Variación: %{customdata[4]:.1f}%<extra></extra>",
     name:"Origen",
     showlegend:false
   };
